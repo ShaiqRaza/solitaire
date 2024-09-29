@@ -61,7 +61,7 @@ ostream& operator<<(ostream& out, card*& d) {
 void shuffleCards(card**& cardArray) {
 	srand(time(0));
 	card* temp = nullptr;
-	for (int i = 0; i < 20; i++) {
+	for (int i = 0; i < 25; i++) {
 		int j = rand() % 52;
 		//random swapping
 		temp = cardArray[i];
@@ -228,8 +228,18 @@ public:
 
 //////////////////////////////  the overall globl game functions ////////////////////////////
 void initializeStackPile(stack<card*>& pile, card**& cardArray) {
-	for (int i = 0; i < 28; i++) {
+	for (int i = 0; i < 24; i++) {
 		pile.push(cardArray[i]);
+	}
+}
+void initializeColumnLists(list<card*>*& columnLists, card**& cardArray) {
+	columnLists = new list<card*>[7];
+	int j = 24;//after stack pile remaining cards
+	for (int i = 0; i < 7; i++) {
+		for (int k = 0; k <= i; k++) {
+			columnLists[i].insertAtStart(cardArray[j]);
+			j++;
+		}
 	}
 }
 void startTheGame() {
@@ -242,7 +252,16 @@ void startTheGame() {
 	stack<card*> wastePile;
 	initializeStackPile(stackPile, cardArray);
 
-	stackPile.print();
+	//foundation stacks
+	stack<card*> f1;
+	stack<card*> f2;
+	stack<card*> f3;
+	stack<card*> f4;
+
+	//column lists
+	list<card*>* columnLists = nullptr;
+	initializeColumnLists(columnLists, cardArray);
+
 }
 
 /////////////////////////////////////// main function ///////////////////////////////////////
