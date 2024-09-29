@@ -1,6 +1,45 @@
 #include<iostream>
 using namespace std;
 
+class card {
+	char suit;// h or s or c or d
+	char color; //r or b
+	const char* rank;
+public:
+	//constructor
+	card(): suit('\0'), color('\0'), rank("") {}
+
+	void setCard(char ch1, char ch2, const char* ch3) {
+		suit = ch1;
+		color = ch2;
+		rank = ch3;
+	}
+
+	friend card* initializeCards();
+};
+card* initializeCards() {
+	const char* rankArray[] = { "A","2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+	card* cardArray = new card[52];//hardcode as there only exists 52 cards
+
+	int j = 0;
+	for (int i = 0; i < 52; i++) {
+		if (i < 13)
+			cardArray[i].setCard('h', 'r', rankArray[j]);
+		else if (i < 26)
+			cardArray[i].setCard('s', 'b', rankArray[j]);
+		else if (i < 39)
+			cardArray[i].setCard('c', 'b', rankArray[j]);
+		else
+			cardArray[i].setCard('d', 'r', rankArray[j]);
+		if (j == 12)
+			j = 0;
+		else
+			j++;
+	}
+
+	return cardArray;
+}
+
 template<class T>
 class list {
 
@@ -106,11 +145,19 @@ public:
 		}
 		return false;
 	}
+
+	int getSize() {
+		return size;
+	}
 };
+
+void startTheGame() {
+	card* cardArray = nullptr;
+	cardArray = initializeCards();
+}
 
 int main() 
 {
-	list <int> myList;
-	myList.deleteStart();
+	startTheGame();
 	return 0;
 }
