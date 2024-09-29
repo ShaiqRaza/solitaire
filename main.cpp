@@ -152,10 +152,8 @@ public:
 		return size;
 	}
 
-	node* getTail() {
-		if(size)
-			return tail->prev;
-		return nullptr;
+	T getTail() {
+		return tail->prev->data;
 	}
 };
 
@@ -163,12 +161,17 @@ public:
 template<class T>
 class stack {
 	list<T> s;
+	int maxSize;
 public:
 	//constructor
-	stack(){}
+	stack(): maxSize(-1) {}
+	stack(int n): maxSize(n) {}
 
-	void push() {
-		s.insertAtEnd();
+	void push(T d) {
+		if (maxSize != -1 && s.getSize() >= maxSize)
+			s.insertAtEnd(d);
+		else
+			s.insertAtEnd(d);
 	}
 
 	bool pop() {
@@ -188,6 +191,10 @@ public:
 			throw runtime_error("Stack is empty!");
 		else
 			return s.getTail();
+	}
+
+	void print() {
+		s.print();
 	}
 };
 
