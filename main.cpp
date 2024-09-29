@@ -1,37 +1,48 @@
 #include<iostream>
+#include<cstdlib>
 using namespace std;
 
 /////////////////////////////////// cards and its initializations ////////////////////////////
 class card {
-	char suit;// h or s or c or d
-	char color; //r or b
+	const char* suit;// h or s or c or d
+	const char* color; //r or b
 	const char* rank;
 public:
 	//constructor
-	card(): suit('\0'), color('\0'), rank("") {}
+	card(): suit(""), color(""), rank("") {}
 
-	void setCard(char ch1, char ch2, const char* ch3) {
+	void setCard(const char* ch1, const char* ch2, const char* ch3) {
 		suit = ch1;
 		color = ch2;
 		rank = ch3;
 	}
 
-	friend card* initializeCards();
+	friend card** initializeCards();
+
+	friend ostream& operator<<(ostream& out, card*& d);
 };
-card* initializeCards() {
+card** initializeCards() {
 	const char* rankArray[] = { "A","2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
-	card* cardArray = new card[52];//hardcode as there only exists 52 cards
+	card** cardArray = new card* [52];//hardcode as there only exists 52 cards
 
 	int j = 0;
 	for (int i = 0; i < 52; i++) {
-		if (i < 13)
-			cardArray[i].setCard('h', 'r', rankArray[j]);
-		else if (i < 26)
-			cardArray[i].setCard('s', 'b', rankArray[j]);
-		else if (i < 39)
-			cardArray[i].setCard('c', 'b', rankArray[j]);
-		else
-			cardArray[i].setCard('d', 'r', rankArray[j]);
+		if (i < 13) {
+			cardArray[i] = new card();
+			cardArray[i]-> setCard("heart", "red", rankArray[j]);
+		}
+		else if (i < 26) {
+			cardArray[i] = new card();
+			cardArray[i]->setCard("spade", "black", rankArray[j]);
+		}
+		else if (i < 39) {
+			cardArray[i] = new card();
+			cardArray[i]->setCard("club", "black", rankArray[j]);
+		}
+		else {
+			cardArray[i] = new card();
+			cardArray[i]->setCard("diamond", "red", rankArray[j]);
+		}
 		if (j == 12)
 			j = 0;
 		else
@@ -39,6 +50,24 @@ card* initializeCards() {
 	}
 
 	return cardArray;
+}
+ostream& operator<<(ostream& out, card*& d) {
+	out << d->suit << " ";
+	out << d->color << " ";
+	out << d->rank << endl;
+
+	return out;
+}
+void shuffleCards(card**& cardArray) {
+	srand(time(0));
+	card* temp = nullptr;
+	for (int i = 0; i < 20; i++) {
+		int j = rand() % 52;
+		//random swapping
+		temp = cardArray[i];
+		cardArray[i] = cardArray[j];
+		cardArray[j] = temp;
+	}
 }
 
 ///////////////////////////////////// list implementations //////////////////////////////////
@@ -93,15 +122,6 @@ public:
 		size++;
 	}
 
-	void print() {
-		node* temp = head->next;
-		while (temp->next) {
-			cout << temp->data << " ";
-			temp = temp->next;
-		}
-		cout << endl;
-	}
-
 	bool deleteStart() {
 		if (size) {
 			node* temp = head->next;
@@ -124,6 +144,15 @@ public:
 			return true;
 		}
 		return false;
+	}
+
+	void print() {
+		node* temp = head->next;
+		while (temp->next) {
+			cout << temp->data << " ";
+			temp = temp->next;
+		}
+		cout << endl;
 	}
 
 	node* findElement(T val) {
@@ -188,21 +217,32 @@ public:
 			return s.getTail();
 	}
 
-	void print() {
-		s.print();
-	}
-
 	int size() {
 		return s.getSize();
+	}
+
+	void print() {
+		s.print();
 	}
 };
 
 //////////////////////////////  the overall globl game functions ////////////////////////////
+void initializeStackPile(stack<card*>& pile, card**& cardArray) {
+	for (int i = 0; i < 28; i++) {
+		pile.push(cardArray[i]);
+	}
+}
 void startTheGame() {
-	card* cardArray = nullptr;
+	card** cardArray = nullptr;
 	cardArray = initializeCards();
+	shuffleCards(cardArray);
 
 	//stackPile & wastePile
+	stack<card*> stackPile;
+	stack<card*> wastePile;
+	initializeStackPile(stackPile, cardArray);
+
+	stackPile.print();
 }
 
 /////////////////////////////////////// main function ///////////////////////////////////////
