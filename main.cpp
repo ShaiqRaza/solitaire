@@ -165,7 +165,7 @@ class stack {
 	list<T> s;
 public:
 	//constructor
-	stack(): count(0){}
+	stack(){}
 
 	void push() {
 		s.insertAtEnd();
@@ -184,8 +184,8 @@ public:
 	}
 
 	T top() {
-		if(isEmpty())
-			throw runtime_error("Stack is empty!")
+		if (isEmpty())
+			throw runtime_error("Stack is empty!");
 		else
 			return s.getTail();
 	}
