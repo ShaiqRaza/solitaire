@@ -1,6 +1,7 @@
 #include<iostream>
 using namespace std;
 
+/////////////////////////////////// cards and its initializations ////////////////////////////
 class card {
 	char suit;// h or s or c or d
 	char color; //r or b
@@ -40,6 +41,7 @@ card* initializeCards() {
 	return cardArray;
 }
 
+///////////////////////////////////// list implementations //////////////////////////////////
 template<class T>
 class list {
 
@@ -149,13 +151,55 @@ public:
 	int getSize() {
 		return size;
 	}
+
+	node* getTail() {
+		if(size)
+			return tail->prev;
+		return nullptr;
+	}
 };
 
+///////////////////////////////////// stack implementations /////////////////////////////////
+template<class T>
+class stack {
+	list<T> s;
+public:
+	//constructor
+	stack(): count(0){}
+
+	void push() {
+		s.insertAtEnd();
+	}
+
+	bool pop() {
+		if (s.deleteEnd())
+			return true;
+		return false;
+	}
+
+	bool isEmpty() {
+		if (s.getSize())
+			return false;
+		return true;
+	}
+
+	T top() {
+		if(isEmpty())
+			throw runtime_error("Stack is empty!")
+		else
+			return s.getTail();
+	}
+};
+
+//////////////////////////////  the overall globl game functions ////////////////////////////
 void startTheGame() {
 	card* cardArray = nullptr;
 	cardArray = initializeCards();
+
+	//stackPile & wastePile
 }
 
+/////////////////////////////////////// main function ///////////////////////////////////////
 int main() 
 {
 	startTheGame();
