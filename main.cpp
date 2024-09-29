@@ -17,13 +17,13 @@ public:
 		rank = ch3;
 	}
 
-	friend card** initializeCards();
+	friend void initializeCards(card**& cardArray);
 
 	friend ostream& operator<<(ostream& out, card*& d);
 };
-card** initializeCards() {
+void initializeCards(card**& cardArray) {
 	const char* rankArray[] = { "A","2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
-	card** cardArray = new card* [52];//hardcode as there only exists 52 cards
+	cardArray = new card* [52];//hardcode as there only exists 52 cards
 
 	int j = 0;
 	for (int i = 0; i < 52; i++) {
@@ -48,8 +48,6 @@ card** initializeCards() {
 		else
 			j++;
 	}
-
-	return cardArray;
 }
 ostream& operator<<(ostream& out, card*& d) {
 	out << d->suit << " ";
@@ -57,17 +55,6 @@ ostream& operator<<(ostream& out, card*& d) {
 	out << d->rank << endl;
 
 	return out;
-}
-void shuffleCards(card**& cardArray) {
-	srand(time(0));
-	card* temp = nullptr;
-	for (int i = 0; i < 25; i++) {
-		int j = rand() % 52;
-		//random swapping
-		temp = cardArray[i];
-		cardArray[i] = cardArray[j];
-		cardArray[j] = temp;
-	}
 }
 
 ///////////////////////////////////// list implementations //////////////////////////////////
@@ -226,47 +213,57 @@ public:
 	}
 };
 
-//////////////////////////////  the overall globl game functions ////////////////////////////
-void initializeStackPile(stack<card*>& pile, card**& cardArray) {
-	for (int i = 0; i < 24; i++) {
-		pile.push(cardArray[i]);
-	}
-}
-void initializeColumnLists(list<card*>*& columnLists, card**& cardArray) {
-	columnLists = new list<card*>[7];
-	int j = 24;//after stack pile remaining cards
-	for (int i = 0; i < 7; i++) {
-		for (int k = 0; k <= i; k++) {
-			columnLists[i].insertAtStart(cardArray[j]);
-			j++;
-		}
-	}
-}
-void startTheGame() {
-	card** cardArray = nullptr;
-	cardArray = initializeCards();
-	shuffleCards(cardArray);
-
-	//stackPile & wastePile
+class solitaire {
+	card** cardArray;
 	stack<card*> stackPile;
 	stack<card*> wastePile;
-	initializeStackPile(stackPile, cardArray);
-
-	//foundation stacks
 	stack<card*> f1;
 	stack<card*> f2;
 	stack<card*> f3;
 	stack<card*> f4;
+	list<card*>* columnLists;
+public:
+	//constructor
+	solitaire(): cardArray(nullptr), columnLists(nullptr){}
 
-	//column lists
-	list<card*>* columnLists = nullptr;
-	initializeColumnLists(columnLists, cardArray);
+	//////////////////////////////  the overall globl game functions ////////////////////////////
+	void initializeStackPile() {
+		for (int i = 0; i < 24; i++) {
+			stackPile.push(cardArray[i]);
+		}
+	}
+	void initializeColumnLists() {
+		columnLists = new list<card*>[7];
+		int j = 24;//after stack pile remaining cards
+		for (int i = 0; i < 7; i++) {
+			for (int k = 0; k <= i; k++) {
+				columnLists[i].insertAtStart(cardArray[j]);
+				j++;
+			}
+		}
+	}
+	void shuffleCards() {
+		srand(time(0));
+		card* temp = nullptr;
+		for (int i = 0; i < 25; i++) {
+			int j = rand() % 52;
+			//random swapping
+			temp = cardArray[i];
+			cardArray[i] = cardArray[j];
+			cardArray[j] = temp;
+		}
+	}
 
-}
+	void initialization() {
+		initializeCards(cardArray);
+		shuffleCards();
+		initializeStackPile();
+		initializeColumnLists();
+	}
+};
 
 /////////////////////////////////////// main function ///////////////////////////////////////
 int main() 
 {
-	startTheGame();
 	return 0;
 }
