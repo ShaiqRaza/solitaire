@@ -161,17 +161,12 @@ public:
 template<class T>
 class stack {
 	list<T> s;
-	int maxSize;
 public:
 	//constructor
-	stack(): maxSize(-1) {}
-	stack(int n): maxSize(n) {}
+	stack() {}
 
 	void push(T d) {
-		if (maxSize != -1 && s.getSize() >= maxSize)
-			s.insertAtEnd(d);
-		else
-			s.insertAtEnd(d);
+		s.insertAtEnd(d);
 	}
 
 	bool pop() {
@@ -195,6 +190,10 @@ public:
 
 	void print() {
 		s.print();
+	}
+
+	int size() {
+		return s.getSize();
 	}
 };
 
