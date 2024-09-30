@@ -51,9 +51,13 @@ void initializeCards(card**& cardArray) {
 	}
 }
 ostream& operator<<(ostream& out, card* d) {
-	out << d->suit << " ";
+	if (d == nullptr)
+		cout << "[ empty ]";
+	else {
+	out <<"[" << d->suit << " ";
 	out << d->color << " ";
-	out << d->rank << endl;
+	out << d->rank << "]";
+	}
 
 	return out;
 }
@@ -200,7 +204,7 @@ public:
 
 	T top() {
 		if (isEmpty())
-			throw runtime_error("Stack is empty!");
+			return T();// will return nullptr
 		else
 			return s.getTail();
 	}
@@ -263,15 +267,14 @@ public:
 		initializeColumnLists();
 	}
 	void display() {
-		cout << "Stock\t\tWaste" << endl;
+		cout << "Stock\t\tWaste\t\t\t\t\t" << "Foundation 1\tFoundation 2\tFoundation 3\tFoundation 4" << endl;
 		cout << "[   ]\t\t";
-		try {
-			cout << wastePile.top();
-		}
-		catch (runtime_error) {
-			cout << "empty" << endl;
-		}
-		cout << stackPile.size() << " cards \t " << wastePile.size() << " cards" << endl;
+		cout << wastePile.top() << "\t\t\t\t";
+		cout << f1.top() << "  \t";
+		cout << f2.top() << "  \t";
+		cout << f3.top() << "  \t";
+		cout << f4.top() << "  \t" << endl;
+		cout << stackPile.size() << " cards \t " << wastePile.size() << " cards" << endl; 
 	}
 	void input() {
 		cout << "Enter command: ";
