@@ -1,5 +1,6 @@
 #include<iostream>
 #include<cstdlib>
+#include <string>
 using namespace std;
 
 /////////////////////////////////// cards and its initializations ////////////////////////////
@@ -19,7 +20,7 @@ public:
 
 	friend void initializeCards(card**& cardArray);
 
-	friend ostream& operator<<(ostream& out, card*& d);
+	friend ostream& operator<<(ostream& out, card* d);
 };
 void initializeCards(card**& cardArray) {
 	const char* rankArray[] = { "A","2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
@@ -49,7 +50,7 @@ void initializeCards(card**& cardArray) {
 			j++;
 	}
 }
-ostream& operator<<(ostream& out, card*& d) {
+ostream& operator<<(ostream& out, card* d) {
 	out << d->suit << " ";
 	out << d->color << " ";
 	out << d->rank << endl;
@@ -215,6 +216,7 @@ public:
 
 class solitaire {
 	card** cardArray;
+	string command;
 	stack<card*> stackPile;
 	stack<card*> wastePile;
 	stack<card*> f1;
@@ -222,9 +224,10 @@ class solitaire {
 	stack<card*> f3;
 	stack<card*> f4;
 	list<card*>* columnLists;
+	stack<string> commands;
 public:
 	//constructor
-	solitaire(): cardArray(nullptr), columnLists(nullptr){}
+	solitaire() : cardArray(nullptr), columnLists(nullptr) {}
 
 	//////////////////////////////  the overall globl game functions ////////////////////////////
 	void initializeStackPile() {
@@ -253,17 +256,51 @@ public:
 			cardArray[j] = temp;
 		}
 	}
-
 	void initialization() {
 		initializeCards(cardArray);
 		shuffleCards();
 		initializeStackPile();
 		initializeColumnLists();
 	}
+	void display() {
+		cout << "Stock\t\tWaste" << endl;
+		cout << "[   ]\t\t";
+		try {
+			cout << wastePile.top();
+		}
+		catch (runtime_error) {
+			cout << "empty" << endl;
+		}
+		cout << stackPile.size() << " cards \t " << wastePile.size() << " cards" << endl;
+	}
+	void input() {
+		cout << "Enter command: ";
+		getline(cin, command);
+	}
+	void runCommand() {
+		if (command == "s" && stackPile.size() > 0) {
+			wastePile.push(stackPile.top());
+			stackPile.pop();
+		}
+		else if (command == "s" && stackPile.size() == 0){
+			for (int i = 23; i >= 0; i--) {
+				stackPile.push(wastePile.top());
+				wastePile.pop();
+			}
+		}
+	}
 };
 
 /////////////////////////////////////// main function ///////////////////////////////////////
 int main() 
 {
+	solitaire game;
+	game.initialization();
+	game.display();
+	for (int i = 1; i <= 27; i++) {
+		game.input();
+		game.runCommand();
+		game.display();
+	}
 	return 0;
 }
