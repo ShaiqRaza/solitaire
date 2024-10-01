@@ -1,6 +1,7 @@
 #include<iostream>
 #include<cstdlib>
 #include <string>
+#include <sstream>
 using namespace std;
 
 /////////////////////////////////// cards and its initializations ////////////////////////////
@@ -8,9 +9,10 @@ class card {
 	const char* suit;// h or s or c or d
 	const char* color; //r or b
 	const char* rank;
+	bool hide;
 public:
 	//constructor
-	card(): suit(""), color(""), rank("") {}
+	card(): suit(""), color(""), rank(""), hide(false) {}
 
 	void setCard(const char* ch1, const char* ch2, const char* ch3) {
 		suit = ch1;
@@ -18,9 +20,15 @@ public:
 		rank = ch3;
 	}
 
+	void toggleHide() {
+		hide = !hide;
+	}
+
 	friend void initializeCards(card**& cardArray);
 
 	friend ostream& operator<<(ostream& out, card* d);
+
+	friend bool conditionsForCardsInFoundations(card* f, card* c);
 };
 void initializeCards(card**& cardArray) {
 	const char* rankArray[] = { "A","2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
@@ -50,21 +58,40 @@ void initializeCards(card**& cardArray) {
 			j++;
 	}
 }
-ostream& operator<<(ostream& out, card* d) {
+ostream& operator<<(ostream& out, card* d){
 	if (d == nullptr)
 		cout << "[ empty ]";
 	else {
-	out <<"[" << d->suit << " ";
-	out << d->color << " ";
-	out << d->rank << "]";
+		if (d->hide == false) {
+			out << "[" << d->suit << " ";
+			out << d->color << " ";
+			out << d->rank << "]";
+		}
+		else {
+			cout << "[   ]";
+		}
 	}
 
 	return out;
 }
+bool conditionsForCardsInFoundations(card* f, card* c) {
+	const char* rankArray[] = { "A","2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
+	if(f && c)
+		if (f->suit == c->suit && f->color == c->color) {
+			for (int i = 0; i < 13; i++) {
+				if (rankArray[i] == f->rank && rankArray[i + 1] == c->rank) {
+					return true;
+				}
+				return false;
+			}
+		}
+	return false;
+}
 
 ///////////////////////////////////// list implementations //////////////////////////////////
 template<class T>
-class list {
+class list
+{
 
 	class node {
 
@@ -94,6 +121,82 @@ public:
 		tail->prev = head;
 
 		size = 0;
+	}
+
+	class iterator {
+	private:
+		node* currentNode;
+
+	public:
+		iterator(node* n = nullptr) : currentNode(n) {}
+
+		iterator& operator=(node* n) {
+			currentNode = n;
+			return *this;
+		}
+
+		iterator& operator=(iterator& rhs) {
+			if (this->currentNode != rhs.currentNode) {
+				currentNode = rhs.currentNode;
+			}
+			return *this;
+		}
+
+		T& operator*() {
+			return currentNode->data;
+		}
+
+		iterator& operator++() {
+			if (currentNode) {
+				currentNode = currentNode->next;
+			}
+			return *this;
+		}
+
+		iterator& operator++(int) {
+			iterator temp = *this;
+			if (currentNode) {
+				currentNode = currentNode->next;
+			}
+			return temp;
+		}
+
+		iterator& operator--() {
+			if (currentNode) {
+				currentNode = currentNode->prev;
+			}
+			return *this;
+		}
+
+		iterator& operator--(int) {
+			iterator temp = *this;
+			if (currentNode) {
+				currentNode = currentNode->prev;
+			}
+			return temp;
+		}
+
+		bool operator!=(const iterator& other) {
+			return currentNode != other.currentNode;
+		}
+	};
+
+	node* begin() {
+		return head->next;
+	}
+
+	node* end() {
+		return tail;
+	}
+
+	//remove from end not delete
+	void pop() {
+		if (size) {
+			node* temp = tail->prev;
+			tail->prev = tail->prev->prev;
+			tail->prev->next = tail;
+			size--;
+		}
 	}
 
 	void insertAtStart(T d) {
@@ -176,6 +279,10 @@ public:
 	T getTail() {
 		return tail->prev->data;
 	}
+
+	T gethead() {
+		return head->next->data;
+	}
 };
 
 ///////////////////////////////////// stack implementations /////////////////////////////////
@@ -245,6 +352,8 @@ public:
 		for (int i = 0; i < 7; i++) {
 			for (int k = 0; k <= i; k++) {
 				columnLists[i].insertAtStart(cardArray[j]);
+				if (k)
+					columnLists[i].gethead()->toggleHide();
 				j++;
 			}
 		}
@@ -267,18 +376,146 @@ public:
 		initializeColumnLists();
 	}
 	void display() {
+		system("cls");
 		cout << "Stock\t\tWaste\t\t\t\t\t" << "Foundation 1\tFoundation 2\tFoundation 3\tFoundation 4" << endl;
 		cout << "[   ]\t\t";
 		cout << wastePile.top() << "\t\t\t\t";
 		cout << f1.top() << "  \t";
 		cout << f2.top() << "  \t";
 		cout << f3.top() << "  \t";
-		cout << f4.top() << "  \t" << endl;
-		cout << stackPile.size() << " cards \t " << wastePile.size() << " cards" << endl; 
+		cout << f4.top() << "  \t" << endl; 
+		cout << stackPile.size() << " cards \t " << wastePile.size() << " cards" << endl << endl; 
+
+		for (int i = 0; i < 7; i++) {
+			list<card*> ::iterator it = columnLists[i].begin();
+			list<card*> ::iterator end = columnLists[i].end();
+			cout << "Column " << i + 1 << ": ";
+			while (it != end) {
+				cout << *it;
+				it++;
+			}
+			cout << endl;
+		}
 	}
 	void input() {
 		cout << "Enter command: ";
 		getline(cin, command);
+	}
+	void forFoundationsDestination(string source, string dest, int number) {
+		if (source != "c1" && source != "c2" && source != "c3" && source != "c4" && source != "c5" && source != "c6" && source != "c7") {
+			cout << "---------------------" << endl;
+			cout << "Source not exists" << endl;
+			cout << "---------------------" << endl;
+			return;
+		}
+		if (number > 1) {
+			cout << "---------------------" << endl;
+			cout << "Cannot move cards" << endl;
+			cout << "---------------------" << endl;
+			return;
+		}
+		if (dest == "f1") {
+			card* f = f1.top();
+			if (source == "c1") {
+				card* c = columnLists[0].getTail();
+				if (conditionsForCardsInFoundations(f, c)) {
+					f1.push(c);
+					columnLists[0].pop();
+				}
+			}
+			else if (source == "c2") {
+
+			}
+			else if (source == "c3") {
+
+			}
+			else if (source == "c4") {
+
+			}
+			else if (source == "c5") {
+
+			}
+			else if (source == "c6") {
+
+			}
+			else if (source == "c7") {
+
+			}
+		}
+		else if (dest == "f2") {
+			if (source == "c1") {
+
+			}
+			else if (source == "c2") {
+
+			}
+			else if (source == "c3") {
+
+			}
+			else if (source == "c4") {
+
+			}
+			else if (source == "c5") {
+
+			}
+			else if (source == "c6") {
+
+			}
+			else if (source == "c7") {
+
+			}
+		}
+		else if (dest == "f3") {
+			if (source == "c1") {
+
+			}
+			else if (source == "c2") {
+
+			}
+			else if (source == "c3") {
+
+			}
+			else if (source == "c4") {
+
+			}
+			else if (source == "c5") {
+
+			}
+			else if (source == "c6") {
+
+			}
+			else if (source == "c7") {
+
+			}
+		}
+		else if (dest == "f4") {
+			if (source == "c1") {
+
+			}
+			else if (source == "c2") {
+
+			}
+			else if (source == "c3") {
+
+			}
+			else if (source == "c4") {
+
+			}
+			else if (source == "c5") {
+
+			}
+			else if (source == "c6") {
+
+			}
+			else if (source == "c7") {
+
+			}
+		}
+		else {
+			cout << "---------------------" << endl;
+			cout << "Foundation not exists" << endl;
+			cout << "---------------------" << endl;
+		}
 	}
 	void runCommand() {
 		if (command == "s" && stackPile.size() > 0) {
@@ -291,6 +528,14 @@ public:
 				wastePile.pop();
 			}
 		}
+
+		stringstream ss(command);
+		char action;
+		char temp;
+		string source, dest;
+		int number;
+
+		ss >> action >> source >> temp >> dest >> temp >> number;
 	}
 };
 
