@@ -1,6 +1,6 @@
 #include<iostream>
 #include<cstdlib>
-#include <string>
+#include <cstring>
 #include <sstream>
 using namespace std;
 
@@ -76,7 +76,7 @@ ostream& operator<<(ostream& out, card* d){
 }
 bool conditionsForCardsInFoundations(card* f, card* c) {
 	const char* rankArray[] = { "A","2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
-	if(f && c)
+	if (f && c) {
 		if (f->suit == c->suit && f->color == c->color) {
 			for (int i = 0; i < 13; i++) {
 				if (rankArray[i] == f->rank && rankArray[i + 1] == c->rank) {
@@ -85,6 +85,14 @@ bool conditionsForCardsInFoundations(card* f, card* c) {
 				return false;
 			}
 		}
+	}
+	else if (c && !f) {
+		if (c->rank == "A")
+			return true;
+		return false;
+	}
+		
+		
 	return false;
 }
 
@@ -402,7 +410,7 @@ public:
 		getline(cin, command);
 	}
 	void forFoundationsDestination(string source, string dest, int number) {
-		if (source != "c1" && source != "c2" && source != "c3" && source != "c4" && source != "c5" && source != "c6" && source != "c7") {
+		if (source != "c1" && source != "c2" && source != "c3" && source != "c4" && source != "c5" && source != "c6" && source != "c7" && source != "w") {
 			cout << "---------------------" << endl;
 			cout << "Source not exists" << endl;
 			cout << "---------------------" << endl;
@@ -528,14 +536,17 @@ public:
 				wastePile.pop();
 			}
 		}
+		else {
 
-		stringstream ss(command);
-		char action;
-		char temp;
-		string source, dest;
-		int number;
+			stringstream ss(command);
+			char action;
+			string source, dest;
+			int number;
 
-		ss >> action >> source >> temp >> dest >> temp >> number;
+			ss >> action >> source >> dest >> number;
+
+			forFoundationsDestination(source, dest, number);
+		}
 	}
 };
 
