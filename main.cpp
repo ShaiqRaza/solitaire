@@ -219,6 +219,17 @@ public:
 			source.size = source.size - n;
 			dest.size = dest.size + n;
 		}
+		void moveNodesToAnotherListFromFoundations(list<T>& dest, list<T>& source, int& n) {
+			currentNode->prev->next = source.tail;
+			node* temp = currentNode->prev;
+			currentNode->prev = dest.tail->prev;
+			dest.tail->prev->next = currentNode;
+			source.tail->prev = temp;
+			dest.tail->prev = currentNode;
+			currentNode->next = dest.tail;
+			source.size = source.size - n;
+			dest.size = dest.size + n;
+		}
 	};
 
 	node* begin() {
@@ -581,6 +592,31 @@ public:
 		}
 		
 	}
+	void MoveFundationToList(list<card*>& source, list<card*>& dest, int& number) {
+		if (number > source.getSize()) {
+			cout << "Invalid Command!" << endl;
+			return;
+		}
+		else {
+			list<card*> ::iterator it = source.end();
+			list<card*> ::iterator it2 = source.end();
+			it2--;
+			for (int i = 1; i < number; i++) {
+				if (!conditionsForCardsInLists(*it, *it2)) {
+					cout << "Invalid Command!" << endl;
+					return;
+				}
+				it--;
+				it2--;
+			}
+			if (!conditionsForCardsInLists(*it, dest.getTail())) {
+				cout << "Invalid Command" << endl;
+				return;
+			}
+			//if conditions are true
+			it.moveNodesToAnotherListFromFoundations(dest, source, number);
+		}
+	}
 	void movetoList(list<card*>& dest, string source, int number) {
 		if (source == "c1")
 			MoveListToList(columnLists[0], dest, number);
@@ -606,6 +642,39 @@ public:
 				list<card*> ::iterator it = l.end();
 				it.moveNodesToAnotherList(dest, l, number);
 			}
+		}
+		else if (source == "f1") {
+			card* c = dest.getTail();
+			card* f = f1.top();
+			if (!conditionsForCardsInLists(f, c))
+				cout << "Invalid Command!" << endl;
+			else
+				MoveFundationToList(f1.getList(), dest, number);
+	
+		}
+		else if (source == "f2") {
+			card* c = dest.getTail();
+			card* f = f2.top();
+			if (!conditionsForCardsInLists(f, c))
+				cout << "Invalid Command!" << endl;
+			else
+				MoveFundationToList(f2.getList(), dest, number);
+		}
+		else if (source == "f3") {
+			card* c = dest.getTail();
+			card* f = f3.top();
+			if (!conditionsForCardsInLists(f, c))
+				cout << "Invalid Command!" << endl;
+			else
+				MoveFundationToList(f3.getList(), dest, number);
+		}
+		else if (source == "f4") {
+			card* c = dest.getTail();
+			card* f = f4.top();
+			if (!conditionsForCardsInLists(f, c))
+				cout << "Invalid Command!" << endl;
+			else
+				MoveFundationToList(f4.getList(), dest, number);
 		}
 	}
 	void forListsDestination(string source, string dest, int number) {
