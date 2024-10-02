@@ -336,6 +336,18 @@ public:
 	T& gethead() {
 		return head->next->data;
 	}
+
+	void movelistToFoundation(list<card*>& foundation) {
+		node* temp = tail->prev->prev;
+		temp->next = tail;
+		tail->prev->prev = foundation.tail->prev;
+		foundation.head->next = tail->prev;
+		tail->prev->next = foundation.tail;
+		foundation.tail->prev = tail->prev;
+		tail->prev = temp;
+		foundation.size = foundation.size + 1;
+		size = size - 1;
+	}
 };
 
 ///////////////////////////////////// stack implementations /////////////////////////////////
@@ -464,19 +476,19 @@ public:
 		if (source == "c1") {
 			card* c = columnLists[0].getTail();
 			if (conditionsForCardsInFoundations(f, c)) {
-				foundation.push(c);
-				columnLists[0].pop();
-				c = columnLists[0].getTail();
-				if(c)
-					if(c->getHide())
+				columnLists[0].movelistToFoundation(foundation.getList());
+				commands.push(command);
+				c = columnLists[1].getTail();
+				if (c)
+					if (c->getHide())
 						c->toggleHide();
 			}
 		}
 		else if (source == "c2") {
 			card* c = columnLists[1].getTail();
 			if (conditionsForCardsInFoundations(f, c)) {
-				foundation.push(c);
-				columnLists[1].pop();
+				columnLists[1].movelistToFoundation(foundation.getList());
+				commands.push(command);
 				c = columnLists[1].getTail();
 				if (c)
 					if (c->getHide())
@@ -486,8 +498,8 @@ public:
 		else if (source == "c3") {
 			card* c = columnLists[2].getTail();
 			if (conditionsForCardsInFoundations(f, c)) {
-				foundation.push(c);
-				columnLists[2].pop();
+				columnLists[2].movelistToFoundation(foundation.getList());
+				commands.push(command);
 				c = columnLists[2].getTail();
 				if (c)
 					if (c->getHide())
@@ -497,8 +509,8 @@ public:
 		else if (source == "c4") {
 			card* c = columnLists[3].getTail();
 			if (conditionsForCardsInFoundations(f, c)) {
-				foundation.push(c);
-				columnLists[3].pop();
+				columnLists[3].movelistToFoundation(foundation.getList());
+				commands.push(command);
 				c = columnLists[3].getTail();
 				if (c)
 					if (c->getHide())
@@ -508,8 +520,8 @@ public:
 		else if (source == "c5") {
 			card* c = columnLists[4].getTail();
 			if (conditionsForCardsInFoundations(f, c)) {
-				foundation.push(c);
-				columnLists[4].pop();
+				columnLists[4].movelistToFoundation(foundation.getList());
+				commands.push(command);
 				c = columnLists[4].getTail();
 				if (c)
 					if (c->getHide())
@@ -519,8 +531,8 @@ public:
 		else if (source == "c6") {
 			card* c = columnLists[5].getTail();
 			if (conditionsForCardsInFoundations(f, c)) {
-				foundation.push(c);
-				columnLists[5].pop();
+				columnLists[5].movelistToFoundation(foundation.getList());
+				commands.push(command);
 				c = columnLists[5].getTail();
 				if (c)
 					if (c->getHide())
@@ -530,8 +542,8 @@ public:
 		else if (source == "c7") {
 			card* c = columnLists[6].getTail();
 			if (conditionsForCardsInFoundations(f, c)) {
-				foundation.push(c);
-				columnLists[6].pop();
+				columnLists[6].movelistToFoundation(foundation.getList());
+				commands.push(command);
 				c = columnLists[6].getTail();
 				if (c)
 					if (c->getHide())
@@ -541,8 +553,8 @@ public:
 		else if (source == "w") {
 			card* c = wastePile.top();
 			if (conditionsForCardsInFoundations(f, c)) {
-				foundation.push(c);
-				wastePile.pop();
+				wastePile.getList().movelistToFoundation(foundation.getList());
+				commands.push(command);
 			}
 		}
 	}
@@ -590,6 +602,7 @@ public:
 			}
 			//if conditions are true
 			it.moveNodesToAnotherList(dest, source, number);
+			commands.push(command);
 		}
 		
 	}
@@ -616,6 +629,7 @@ public:
 			}
 			//if conditions are true
 			it.moveNodesToAnotherListFromFoundations(dest, source, number);
+			commands.push(command);
 		}
 	}
 	void movetoList(list<card*>& dest, string source, int number) {
@@ -642,6 +656,7 @@ public:
 				list<card*> l = wastePile.getList();
 				list<card*> ::iterator it = l.end();
 				it.moveNodesToAnotherListFromFoundations(dest, l, number);
+				commands.push(command);
 			}
 		}
 		else if (source == "f1") {
@@ -649,8 +664,10 @@ public:
 			card* f = f1.top();
 			if (!conditionsForCardsInLists(f, c))
 				cout << "Invalid Command!" << endl;
-			else
+			else {
 				MoveFundationToList(f1.getList(), dest, number);
+				commands.push(command);
+			}
 	
 		}
 		else if (source == "f2") {
@@ -658,24 +675,30 @@ public:
 			card* f = f2.top();
 			if (!conditionsForCardsInLists(f, c))
 				cout << "Invalid Command!" << endl;
-			else
+			else {
 				MoveFundationToList(f2.getList(), dest, number);
+				commands.push(command);
+			}
 		}
 		else if (source == "f3") {
 			card* c = dest.getTail();
 			card* f = f3.top();
 			if (!conditionsForCardsInLists(f, c))
 				cout << "Invalid Command!" << endl;
-			else
+			else {
 				MoveFundationToList(f3.getList(), dest, number);
+				commands.push(command);
+			}
 		}
 		else if (source == "f4") {
 			card* c = dest.getTail();
 			card* f = f4.top();
 			if (!conditionsForCardsInLists(f, c))
 				cout << "Invalid Command!" << endl;
-			else
+			else {
 				MoveFundationToList(f4.getList(), dest, number);
+				commands.push(command);
+			}
 		}
 	}
 	void forListsDestination(string source, string dest, int number) {
@@ -713,18 +736,20 @@ public:
 	}
 	void runCommand() {
 		if (command == "s" && stackPile.size() > 0) {
-			wastePile.push(stackPile.top());
-			stackPile.pop();
+			stackPile.getList().movelistToFoundation(wastePile.getList());
+			commands.push(command);
 		}
 		else if (command == "s" && stackPile.size() == 0) {
 			for (int i = 23; i >= 0; i--) {
-				stackPile.push(wastePile.top());
-				wastePile.pop();
+				wastePile.getList().movelistToFoundation(stackPile.getList());
+				commands.push(command);
 			}
 		}
 		else if (command == "z") {
-			
+
 		}
+		else if (command == "quit")
+			return;
 		else {
 
 			stringstream ss(command);
@@ -757,6 +782,8 @@ public:
 			input();
 			system("cls");
 			runCommand();
+			if (command == "quit")
+				return;
 		}
 		cout << "Game Over!" << endl;
 	}
