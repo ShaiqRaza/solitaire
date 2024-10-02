@@ -101,6 +101,8 @@ bool conditionsForCardsInFoundations(card*& f, card*& c) {
 	return false;
 }
 bool conditionsForCardsInLists(card*& c1, card*& c2) {
+	if (c1 == nullptr)
+		return false;
 	if (c2 == nullptr)
 		if (c1->rank == "K")
 			return true;
@@ -212,9 +214,9 @@ public:
 			node* temp = currentNode->prev;
 			currentNode->prev = dest.tail->prev;
 			dest.tail->prev->next = currentNode;
+			source.tail->prev->next = dest.tail;
+			dest.tail->prev = source.tail->prev;
 			source.tail->prev = temp;
-			dest.tail->prev = currentNode;
-			currentNode->next = dest.tail;
 			temp->data->toggleHide();
 			source.size = source.size - n;
 			dest.size = dest.size + n;
@@ -224,9 +226,9 @@ public:
 			node* temp = currentNode->prev;
 			currentNode->prev = dest.tail->prev;
 			dest.tail->prev->next = currentNode;
+			source.tail->prev->next = dest.tail;
+			dest.tail->prev = source.tail->prev;
 			source.tail->prev = temp;
-			dest.tail->prev = currentNode;
-			currentNode->next = dest.tail;
 			source.size = source.size - n;
 			dest.size = dest.size + n;
 		}
@@ -431,7 +433,6 @@ public:
 		initializeColumnLists();
 	}
 	void display() {
-		system("cls");
 		cout << "Stock\t\tWaste\t\t\t\t\t" << "\tFoundation 1\t\tFoundation 2\t\tFoundation 3\t\tFoundation 4" << endl;
 		cout << "[   ]\t\t";
 		cout << wastePile.top() << "\t\t\t\t";
@@ -722,8 +723,7 @@ public:
 			}
 		}
 		else if (command == "z") {
-
-
+			
 		}
 		else {
 
@@ -750,19 +750,24 @@ public:
 				cout << action << " Invalid Command!" << endl;
 		}
 	}
+	void startGame() {
+		initialization();
+		while (f1.size()<13 || f2.size()<13 || f3.size() < 13 || f4.size() < 13 ) {
+			display();
+			input();
+			system("cls");
+			runCommand();
+		}
+		cout << "Game Over!" << endl;
+	}
 };
 
 /////////////////////////////////////// main function ///////////////////////////////////////
 int main()
 {
 	solitaire game;
-	game.initialization();
-	game.display();
-	for (int i = 1; i <= 47; i++) {
-		game.input();
-
-		game.runCommand();
-		game.display();
-	}
+	
+	game.startGame();
+	
 	return 0;
 }
