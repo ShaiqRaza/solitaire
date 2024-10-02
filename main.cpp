@@ -640,7 +640,7 @@ public:
 			else {
 				list<card*> l = wastePile.getList();
 				list<card*> ::iterator it = l.end();
-				it.moveNodesToAnotherList(dest, l, number);
+				it.moveNodesToAnotherListFromFoundations(dest, l, number);
 			}
 		}
 		else if (source == "f1") {
