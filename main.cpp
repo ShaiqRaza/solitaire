@@ -26,14 +26,16 @@ public:
 	}
 
 	void toggleHide() {
-		hide = !hide;
+		if(this)
+			hide = !hide;
 	}
 
 	friend void initializeCards(card**& cardArray);
 
 	friend ostream& operator<<(ostream& out, card* d);
 
-	friend bool conditionsForCardsInFoundations(card* f, card* c);
+	friend bool conditionsForCardsInFoundations(card*& f, card*& c);
+	friend bool conditionsForCardsInLists(card*& c1, card*& c2);
 };
 void initializeCards(card**& cardArray) {
 	const char* rankArray[] = { "A","2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
@@ -79,7 +81,7 @@ ostream& operator<<(ostream& out, card* d) {
 
 	return out;
 }
-bool conditionsForCardsInFoundations(card* f, card* c) {
+bool conditionsForCardsInFoundations(card*& f, card*& c) {
 	const char* rankArray[] = { "A","2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
 	if (f && c) {
 		if (f->suit == c->suit && f->color == c->color) {
@@ -98,8 +100,21 @@ bool conditionsForCardsInFoundations(card* f, card* c) {
 
 	return false;
 }
-bool conditionsForCardsInLists(card* c, card* s) {
-
+bool conditionsForCardsInLists(card*& c1, card*& c2) {
+	if (c2 == nullptr)
+		if (c1->rank == "K")
+			return true;
+		else
+			return false;
+	if (c1->hide || c2->hide)
+		return false;
+	const char* rankArray[] = { "A","2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
+	if (c1->color != c2->color) {
+		for (int i = 0; i < 13; i++)
+			if (rankArray[i] == c1->rank && rankArray[i + 1] == c2->rank)
+				return true;
+	}
+	return false;
 }
 
 ///////////////////////////////////// list implementations //////////////////////////////////
@@ -198,6 +213,9 @@ public:
 			currentNode->prev = dest.tail->prev;
 			dest.tail->prev->next = currentNode;
 			source.tail->prev = temp;
+			dest.tail->prev = currentNode;
+			currentNode->next = dest.tail;
+			temp->data->toggleHide();
 			source.size = source.size - n;
 			dest.size = dest.size + n;
 		}
@@ -208,7 +226,7 @@ public:
 	}
 
 	node* end() {
-		return tail-prev;
+		return tail->prev;
 	}
 
 	//remove from end not delete
@@ -298,11 +316,11 @@ public:
 		return size;
 	}
 
-	T getTail() {
+	T& getTail() {
 		return tail->prev->data;
 	}
 
-	T gethead() {
+	T& gethead() {
 		return head->next->data;
 	}
 };
@@ -344,6 +362,10 @@ public:
 
 	void print() {
 		s.print();
+	}
+
+	list<T>& getList() {
+		return s;
 	}
 };
 
@@ -411,6 +433,8 @@ public:
 		for (int i = 0; i < 7; i++) {
 			list<card*> ::iterator it = columnLists[i].begin();
 			list<card*> ::iterator end = columnLists[i].end();
+			end++;
+			it++;
 			cout << "Column " << i + 1 << ": ";
 			while (it != end) {
 				cout << *it;
@@ -431,8 +455,9 @@ public:
 				foundation.push(c);
 				columnLists[0].pop();
 				c = columnLists[0].getTail();
-				if(c->getHide())
-					c->toggleHide();
+				if(c)
+					if(c->getHide())
+						c->toggleHide();
 			}
 		}
 		else if (source == "c2") {
@@ -441,8 +466,9 @@ public:
 				foundation.push(c);
 				columnLists[1].pop();
 				c = columnLists[1].getTail();
-				if (c->getHide())
-					c->toggleHide();
+				if (c)
+					if (c->getHide())
+						c->toggleHide();
 			}
 		}
 		else if (source == "c3") {
@@ -451,8 +477,9 @@ public:
 				foundation.push(c);
 				columnLists[2].pop();
 				c = columnLists[2].getTail();
-				if (c->getHide())
-					c->toggleHide();
+				if (c)
+					if (c->getHide())
+						c->toggleHide();
 			}
 		}
 		else if (source == "c4") {
@@ -461,8 +488,9 @@ public:
 				foundation.push(c);
 				columnLists[3].pop();
 				c = columnLists[3].getTail();
-				if (c->getHide())
-					c->toggleHide();
+				if (c)
+					if (c->getHide())
+						c->toggleHide();
 			}
 		}
 		else if (source == "c5") {
@@ -471,8 +499,9 @@ public:
 				foundation.push(c);
 				columnLists[4].pop();
 				c = columnLists[4].getTail();
-				if (c->getHide())
-					c->toggleHide();
+				if (c)
+					if (c->getHide())
+						c->toggleHide();
 			}
 		}
 		else if (source == "c6") {
@@ -481,8 +510,9 @@ public:
 				foundation.push(c);
 				columnLists[5].pop();
 				c = columnLists[5].getTail();
-				if (c->getHide())
-					c->toggleHide();
+				if (c)
+					if (c->getHide())
+						c->toggleHide();
 			}
 		}
 		else if (source == "c7") {
@@ -491,8 +521,9 @@ public:
 				foundation.push(c);
 				columnLists[6].pop();
 				c = columnLists[6].getTail();
-				if (c->getHide())
-					c->toggleHide();
+				if (c)
+					if (c->getHide())
+						c->toggleHide();
 			}
 		}
 		else if (source == "w") {
@@ -531,11 +562,15 @@ public:
 		}
 		else {
 			list<card*> ::iterator it = source.end();
+			list<card*> ::iterator it2 = source.end();
+			it2--;
 			for (int i = 1; i < number; i++) {
-				if (!conditionsForCardsInLists(*it, *(--it))) {
+				if (!conditionsForCardsInLists(*it, *it2)) {
 					cout << "Invalid Command!" << endl;
 					return;
 				}
+				it--;
+				it2--;
 			}
 			if (!conditionsForCardsInLists(*it, dest.getTail())) {
 				cout << "Invalid Command" << endl;
@@ -549,57 +584,61 @@ public:
 	void movetoList(list<card*>& dest, string source, int number) {
 		if (source == "c1")
 			MoveListToList(columnLists[0], dest, number);
-		if (source == "c2")
+		else if (source == "c2")
 			MoveListToList(columnLists[1], dest, number);
-		if (source == "c3")
+		else if (source == "c3")
 			MoveListToList(columnLists[2], dest, number);
-		if (source == "c4")
+		else if (source == "c4")
 			MoveListToList(columnLists[3], dest, number);
-		if (source == "c5")
+		else if (source == "c5")
 			MoveListToList(columnLists[4], dest, number);
-		if (source == "c6")
+		else if (source == "c6")
 			MoveListToList(columnLists[5], dest, number);
-		if (source == "c7")
+		else if (source == "c7")
 			MoveListToList(columnLists[6], dest, number);
+		else if (source == "w") {
+			card* c1 = wastePile.top();
+			card* c2 = dest.getTail();
+			if (!conditionsForCardsInLists(c1, c2))
+				cout << "Invalid Command!" << endl;
+			else {
+				list<card*> l = wastePile.getList();
+				list<card*> ::iterator it = l.end();
+				it.moveNodesToAnotherList(dest, l, number);
+			}
+		}
 	}
 	void forListsDestination(string source, string dest, int number) {
 		if (source != "c1" && source != "c2" && source != "c3" && source != "c4" && source != "c5" && source != "c6" && source != "c7" && source != "w" && source != "f1" && source != "f2" && source != "f3" && source != "f4") {
 			cout << "Source not possible" << endl;
 			return;
 		}
-		if (source == "w" || source == "f1" || source == "f2" || source == "f3" || source != "f4") {
+		if (source == "w" || source == "f1" || source == "f2" || source == "f3" || source == "f4") {
 			if (number > 1) {
 				cout << "Cannot move cards" << endl;
 				return;
 			}
 		}
 		if (dest == "c1") {
-			list<card*> list = columnLists[0];
-			movetoList(list, source, number);
+			movetoList(columnLists[0], source, number);
 		}
 		else if (dest == "c2") {
-			list<card*> list = columnLists[1];
-			movetoList(list, source, number);
+			movetoList(columnLists[1], source, number);
 		}
 		else if (dest == "c3") {
-			list<card*> list = columnLists[2];
-			movetoList(list, source, number);
+			movetoList(columnLists[2], source, number);
 		}
 		else if (dest == "c4") {
-			list<card*> list = columnLists[3];
-			movetoList(list, source, number);
+			movetoList(columnLists[3], source, number);
 		}
 		else if (dest == "c5") {
-			list<card*> list = columnLists[4];
-			movetoList(list, source, number);
+			movetoList(columnLists[4], source, number);
 		}
 		else if (dest == "c6") {
-			list<card*> list = columnLists[5];
-			movetoList(list, source, number);
+			movetoList(columnLists[5], source, number);
 		}
 		else if (dest == "c7") {
-			list<card*> list = columnLists[6];
-			movetoList(list, source, number);
+			movetoList(columnLists[6], source, number);
 		}
 	}
 	void runCommand() {
@@ -650,8 +689,9 @@ int main()
 	solitaire game;
 	game.initialization();
 	game.display();
-	for (int i = 1; i <= 27; i++) {
+	for (int i = 1; i <= 47; i++) {
 		game.input();
+
 		game.runCommand();
 		game.display();
 	}
