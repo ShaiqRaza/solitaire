@@ -542,7 +542,7 @@ public:
 				return;
 			}
 			//if conditions are true
-			it.moveNodesToAnotherList(dest, source);
+			it.moveNodesToAnotherList(dest, source, number);
 		}
 		
 	}
