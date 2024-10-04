@@ -659,7 +659,7 @@ public:
 			MoveListToList(columnLists[5], dest, number);
 		else if (source == "c7")
 			MoveListToList(columnLists[6], dest, number);
-		else if (source == "w")
+		else if (source == "w")// undo mai w kabhi ho ga hi nhi source
 			MoveWasteToList(dest, number);
 		else if (source == "f1")
 			MoveFundationToList(f1.getList(), dest, number);
@@ -705,8 +705,29 @@ public:
 	}
 	//for undo functions
 	
-	void moveListToWasteReverse(list<card*>& source, list<card*>& dest) {
-
+	void moveToWasteReverse(string& source, list<card*>& dest, int& number) {
+		if (source == "c1")
+			MoveListToListReverse(columnLists[0], dest, number);
+		else if (source == "c2")
+			MoveListToListReverse(columnLists[1], dest, number);
+		else if (source == "c3")
+			MoveListToListReverse(columnLists[2], dest, number);
+		else if (source == "c4")
+			MoveListToListReverse(columnLists[3], dest, number);
+		else if (source == "c5")
+			MoveListToListReverse(columnLists[4], dest, number);
+		else if (source == "c6")
+			MoveListToListReverse(columnLists[5], dest, number);
+		else if (source == "c7")
+			MoveListToListReverse(columnLists[6], dest, number);
+		else if (source == "f1")
+			MoveFundationToListReverse(f1.getList(), dest, number);
+		else if (source == "f2")
+			MoveFundationToListReverse(f2.getList(), dest, number);
+		else if (source == "f3")
+			MoveFundationToListReverse(f3.getList(), dest, number);
+		else if (source == "f4")
+			MoveFundationToListReverse(f4.getList(), dest, number);
 	}
 	void movetoFoundationReverse(stack<card*>& foundation, string source) {
 		card* f = foundation.top();
@@ -799,15 +820,40 @@ public:
 		else if (dest == "c7")
 			movetoList(columnLists[6], source, number);
 	}
+	void forFoundationsDestinationReverse(string& source, string& dest, int& number) {
+		if (dest == "f1")
+			movetoFoundationReverse(f1, source);
+		else if (dest == "f2")
+			movetoFoundationReverse(f2, source);
+		else if (dest == "f3")
+			movetoFoundationReverse(f3, source);
+		else if (dest == "f4")
+			movetoFoundationReverse(f4, source);
+	}
 
 	void runUndoCommand() {
-		
-		stringstream ss(commands.top());
-		char action;
-		string source, dest;
-		int number;
+		if (commands.isEmpty())
+			cout << "No Undo Possible!" << endl;
+		else
+			if (commands.top() == "s" && wastePile.size() > 0)
+				wastePile.getList().movelistToFoundation(stackPile.getList());
+			else if (commands.top() == "s" && wastePile.size() == 0)
+				for (int i = 23; i >= 0; i--)
+					stackPile.getList().movelistToFoundation(wastePile.getList());
+			else {
+				stringstream ss(commands.top());
+				char action;
+				string source, dest;
+				int number;
+				ss >> action >> dest >> source >> number;
 
-		ss >> action >> dest >> source >> number;
+				if (dest[0] == 'f')
+					forFoundationsDestinationReverse(source, dest, number);
+				else if (dest[0] == 'c')
+					forListsDestinationReverse(source, dest, number);
+				else
+					moveToWasteReverse(source, wastePile.getList(), number);
+			}
 	}
 	void runCommand() {
 		if (command == "s" && stackPile.size() > 0) {
