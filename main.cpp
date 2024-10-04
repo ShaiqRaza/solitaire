@@ -705,7 +705,7 @@ public:
 	}
 	//for undo functions
 	
-	void moveToWasteReverse(string& source, list<card*>& dest, int& number) {
+	void moveToWasteReverse(list<card*>& dest, string& source, int& number) {
 		if (source == "c1")
 			MoveListToListReverse(columnLists[0], dest, number);
 		else if (source == "c2")
@@ -788,6 +788,30 @@ public:
 					c->toggleHide();
 		}
 	}
+	void movetoListReverse(list<card*>& dest, string& source, int& number) {
+		if (source == "c1")
+			MoveListToListReverse(columnLists[0], dest, number);
+		else if (source == "c2")
+			MoveListToListReverse(columnLists[1], dest, number);
+		else if (source == "c3")
+			MoveListToListReverse(columnLists[2], dest, number);
+		else if (source == "c4")
+			MoveListToListReverse(columnLists[3], dest, number);
+		else if (source == "c5")
+			MoveListToListReverse(columnLists[4], dest, number);
+		else if (source == "c6")
+			MoveListToListReverse(columnLists[5], dest, number);
+		else if (source == "c7")
+			MoveListToListReverse(columnLists[6], dest, number);
+		else if (source == "f1")
+			MoveFundationToListReverse(f1.getList(), dest, number);
+		else if (source == "f2")
+			MoveFundationToListReverse(f2.getList(), dest, number);
+		else if (source == "f3")
+			MoveFundationToListReverse(f3.getList(), dest, number);
+		else if (source == "f4")
+			MoveFundationToListReverse(f4.getList(), dest, number);
+	}
 	void MoveListToListReverse(list<card*>& source, list<card*>& dest, int& number) {
 			list<card*> ::iterator it = source.end();
 
@@ -806,19 +830,19 @@ public:
 	}
 	void forListsDestinationReverse(string source, string dest, int number) {
 		if (dest == "c1")
-			movetoList(columnLists[0], source, number);
+			movetoListReverse(columnLists[0], source, number);
 		else if (dest == "c2")
-			movetoList(columnLists[1], source, number);
+			movetoListReverse(columnLists[1], source, number);
 		else if (dest == "c3")
-			movetoList(columnLists[2], source, number);
+			movetoListReverse(columnLists[2], source, number);
 		else if (dest == "c4")
-			movetoList(columnLists[3], source, number);
+			movetoListReverse(columnLists[3], source, number);
 		else if (dest == "c5")
-			movetoList(columnLists[4], source, number);
+			movetoListReverse(columnLists[4], source, number);
 		else if (dest == "c6")
-			movetoList(columnLists[5], source, number);
+			movetoListReverse(columnLists[5], source, number);
 		else if (dest == "c7")
-			movetoList(columnLists[6], source, number);
+			movetoListReverse(columnLists[6], source, number);
 	}
 	void forFoundationsDestinationReverse(string& source, string& dest, int& number) {
 		if (dest == "f1")
@@ -852,7 +876,7 @@ public:
 				else if (dest[0] == 'c')
 					forListsDestinationReverse(source, dest, number);
 				else
-					moveToWasteReverse(source, wastePile.getList(), number);
+					moveToWasteReverse(wastePile.getList(), source, number);
 			}
 	}
 	void runCommand() {
