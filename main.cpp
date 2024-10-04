@@ -659,47 +659,14 @@ public:
 				commands.push(command);
 			}
 		}
-		else if (source == "f1") {
-			card* c = dest.getTail();
-			card* f = f1.top();
-			if (!conditionsForCardsInLists(f, c))
-				cout << "Invalid Command!" << endl;
-			else {
-				MoveFundationToList(f1.getList(), dest, number);
-				commands.push(command);
-			}
-	
-		}
-		else if (source == "f2") {
-			card* c = dest.getTail();
-			card* f = f2.top();
-			if (!conditionsForCardsInLists(f, c))
-				cout << "Invalid Command!" << endl;
-			else {
-				MoveFundationToList(f2.getList(), dest, number);
-				commands.push(command);
-			}
-		}
-		else if (source == "f3") {
-			card* c = dest.getTail();
-			card* f = f3.top();
-			if (!conditionsForCardsInLists(f, c))
-				cout << "Invalid Command!" << endl;
-			else {
-				MoveFundationToList(f3.getList(), dest, number);
-				commands.push(command);
-			}
-		}
-		else if (source == "f4") {
-			card* c = dest.getTail();
-			card* f = f4.top();
-			if (!conditionsForCardsInLists(f, c))
-				cout << "Invalid Command!" << endl;
-			else {
-				MoveFundationToList(f4.getList(), dest, number);
-				commands.push(command);
-			}
-		}
+		else if (source == "f1")
+			MoveFundationToList(f1.getList(), dest, number);
+		else if (source == "f2") 
+			MoveFundationToList(f2.getList(), dest, number);
+		else if (source == "f3") 
+			MoveFundationToList(f3.getList(), dest, number);
+		else if (source == "f4") 
+			MoveFundationToList(f4.getList(), dest, number);
 	}
 	void forListsDestination(string source, string dest, int number) {
 		if (source != "c1" && source != "c2" && source != "c3" && source != "c4" && source != "c5" && source != "c6" && source != "c7" && source != "w" && source != "f1" && source != "f2" && source != "f3" && source != "f4") {
@@ -746,7 +713,7 @@ public:
 			}
 		}
 		else if (command == "z") {
-
+			
 		}
 		else if (command == "quit")
 			return;
@@ -793,7 +760,6 @@ public:
 int main()
 {
 	solitaire game;
-	
 	game.startGame();
 	
 	return 0;
