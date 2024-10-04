@@ -707,19 +707,19 @@ public:
 	
 	void moveToWasteReverse(list<card*>& dest, string& source, int& number) {
 		if (source == "c1")
-			MoveListToListReverse(columnLists[0], dest, number);
+			MoveFundationToListReverse(columnLists[0], dest, number);
 		else if (source == "c2")
-			MoveListToListReverse(columnLists[1], dest, number);
+			MoveFundationToListReverse(columnLists[1], dest, number);
 		else if (source == "c3")
-			MoveListToListReverse(columnLists[2], dest, number);
+			MoveFundationToListReverse(columnLists[2], dest, number);
 		else if (source == "c4")
-			MoveListToListReverse(columnLists[3], dest, number);
+			MoveFundationToListReverse(columnLists[3], dest, number);
 		else if (source == "c5")
-			MoveListToListReverse(columnLists[4], dest, number);
+			MoveFundationToListReverse(columnLists[4], dest, number);
 		else if (source == "c6")
-			MoveListToListReverse(columnLists[5], dest, number);
+			MoveFundationToListReverse(columnLists[5], dest, number);
 		else if (source == "c7")
-			MoveListToListReverse(columnLists[6], dest, number);
+			MoveFundationToListReverse(columnLists[6], dest, number);
 		else if (source == "f1")
 			MoveFundationToListReverse(f1.getList(), dest, number);
 		else if (source == "f2")
@@ -734,58 +734,30 @@ public:
 		if (source == "c1") {
 			card* c = columnLists[0].getTail();
 			columnLists[0].movelistToFoundation(foundation.getList());
-			c = columnLists[0].getTail();
-			if (c)
-				if (c->getHide())
-					c->toggleHide();
 		}
 		else if (source == "c2") {
 			card* c = columnLists[1].getTail();
 			columnLists[1].movelistToFoundation(foundation.getList());
-			c = columnLists[1].getTail();
-			if (c)
-				if (c->getHide())
-					c->toggleHide();
 		}
 		else if (source == "c3") {
 			card* c = columnLists[2].getTail();
 			columnLists[2].movelistToFoundation(foundation.getList());
-			c = columnLists[2].getTail();
-			if (c)
-				if (c->getHide())
-					c->toggleHide();
 		}
 		else if (source == "c4") {
 			card* c = columnLists[3].getTail();
 			columnLists[3].movelistToFoundation(foundation.getList());
-			c = columnLists[3].getTail();
-			if (c)
-				if (c->getHide())
-					c->toggleHide();
 		}
 		else if (source == "c5") {
 			card* c = columnLists[4].getTail();
 			columnLists[4].movelistToFoundation(foundation.getList());
-			c = columnLists[4].getTail();
-			if (c)
-				if (c->getHide())
-					c->toggleHide();
 		}
 		else if (source == "c6") {
 			card* c = columnLists[5].getTail();
 			columnLists[5].movelistToFoundation(foundation.getList());
-			c = columnLists[5].getTail();
-			if (c)
-				if (c->getHide())
-					c->toggleHide();
 		}
 		else if (source == "c7") {
 			card* c = columnLists[6].getTail();
 			columnLists[6].movelistToFoundation(foundation.getList());
-			c = columnLists[6].getTail();
-			if (c)
-				if (c->getHide())
-					c->toggleHide();
 		}
 	}
 	void movetoListReverse(list<card*>& dest, string& source, int& number) {
@@ -813,12 +785,13 @@ public:
 			MoveFundationToListReverse(f4.getList(), dest, number);
 	}
 	void MoveListToListReverse(list<card*>& source, list<card*>& dest, int& number) {
+		dest.getTail()->toggleHide();
 			list<card*> ::iterator it = source.end();
 
 			for (int i = 1; i < number; i++)
 				it--;
 
-			it.moveNodesToAnotherList(dest, source, number);
+			it.moveNodesToAnotherListFromFoundations(dest, source, number);
 	}
 	void MoveFundationToListReverse(list<card*>& source, list<card*>& dest, int& number) {
 			list<card*> ::iterator it = source.end();
