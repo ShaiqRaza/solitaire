@@ -232,6 +232,19 @@ public:
 			source.size = source.size - n;
 			dest.size = dest.size + n;
 		}
+		void moveNodesToAnotherListFromFoundationsReverse(list<T>& dest, list<T>& source, int& n) {
+			node* destTemp = dest.tail->prev;
+			currentNode->prev->next = source.tail;
+			node* temp = currentNode->prev;
+			currentNode->prev = dest.tail->prev;
+			dest.tail->prev->next = currentNode;
+			source.tail->prev->next = dest.tail;
+			dest.tail->prev = source.tail->prev;
+			source.tail->prev = temp;
+			destTemp->data->toggleHide();
+			source.size = source.size - n;
+			dest.size = dest.size + n;
+		}
 	};
 
 	node* begin() {
@@ -466,6 +479,9 @@ public:
 			}
 			cout << endl;
 		}
+
+		cout << "Commands: " << endl;
+		commands.print();
 	}
 	void input() {
 		cout << "Enter command: ";
@@ -681,53 +697,46 @@ public:
 				return;
 			}
 		}
-		if (dest == "c1") {
+		if (dest == "c1")
 			movetoList(columnLists[0], source, number);
-		}
-		else if (dest == "c2") {
+		else if (dest == "c2")
 			movetoList(columnLists[1], source, number);
-		}
-		else if (dest == "c3") {
+		else if (dest == "c3")
 			movetoList(columnLists[2], source, number);
-		}
-		else if (dest == "c4") {
+		else if (dest == "c4")
 			movetoList(columnLists[3], source, number);
-		}
-		else if (dest == "c5") {
+		else if (dest == "c5")
 			movetoList(columnLists[4], source, number);
-		}
-		else if (dest == "c6") {
+		else if (dest == "c6")
 			movetoList(columnLists[5], source, number);
-		}
-		else if (dest == "c7") {
+		else if (dest == "c7")
 			movetoList(columnLists[6], source, number);
-		}
 	}
 	//for undo functions
 	
 	void moveToWasteReverse(list<card*>& dest, string& source, int& number) {
 		if (source == "c1")
-			MoveFundationToListReverse(columnLists[0], dest, number);
+			MoveFundationToWasteReverse(columnLists[0], dest, number);
 		else if (source == "c2")
-			MoveFundationToListReverse(columnLists[1], dest, number);
+			MoveFundationToWasteReverse(columnLists[1], dest, number);
 		else if (source == "c3")
-			MoveFundationToListReverse(columnLists[2], dest, number);
+			MoveFundationToWasteReverse(columnLists[2], dest, number);
 		else if (source == "c4")
-			MoveFundationToListReverse(columnLists[3], dest, number);
+			MoveFundationToWasteReverse(columnLists[3], dest, number);
 		else if (source == "c5")
-			MoveFundationToListReverse(columnLists[4], dest, number);
+			MoveFundationToWasteReverse(columnLists[4], dest, number);
 		else if (source == "c6")
-			MoveFundationToListReverse(columnLists[5], dest, number);
+			MoveFundationToWasteReverse(columnLists[5], dest, number);
 		else if (source == "c7")
-			MoveFundationToListReverse(columnLists[6], dest, number);
+			MoveFundationToWasteReverse(columnLists[6], dest, number);
 		else if (source == "f1")
-			MoveFundationToListReverse(f1.getList(), dest, number);
+			MoveFundationToWasteReverse(f1.getList(), dest, number);
 		else if (source == "f2")
-			MoveFundationToListReverse(f2.getList(), dest, number);
+			MoveFundationToWasteReverse(f2.getList(), dest, number);
 		else if (source == "f3")
-			MoveFundationToListReverse(f3.getList(), dest, number);
+			MoveFundationToWasteReverse(f3.getList(), dest, number);
 		else if (source == "f4")
-			MoveFundationToListReverse(f4.getList(), dest, number);
+			MoveFundationToWasteReverse(f4.getList(), dest, number);
 	}
 	void movetoFoundationReverse(stack<card*>& foundation, string source) {
 		card* f = foundation.top();
@@ -776,13 +785,13 @@ public:
 		else if (source == "c7")
 			MoveListToListReverse(columnLists[6], dest, number);
 		else if (source == "f1")
-			MoveFundationToListReverse(f1.getList(), dest, number);
+			MoveFoundationToListReverse(f1.getList(), dest, number);
 		else if (source == "f2")
-			MoveFundationToListReverse(f2.getList(), dest, number);
+			MoveFoundationToListReverse(f2.getList(), dest, number);
 		else if (source == "f3")
-			MoveFundationToListReverse(f3.getList(), dest, number);
+			MoveFoundationToListReverse(f3.getList(), dest, number);
 		else if (source == "f4")
-			MoveFundationToListReverse(f4.getList(), dest, number);
+			MoveFoundationToListReverse(f4.getList(), dest, number);
 	}
 	void MoveListToListReverse(list<card*>& source, list<card*>& dest, int& number) {
 		dest.getTail()->toggleHide();
@@ -793,13 +802,21 @@ public:
 
 			it.moveNodesToAnotherListFromFoundations(dest, source, number);
 	}
-	void MoveFundationToListReverse(list<card*>& source, list<card*>& dest, int& number) {
+	void MoveFundationToWasteReverse(list<card*>& source, list<card*>& dest, int& number) {
 			list<card*> ::iterator it = source.end();
 
 			for (int i = 1; i < number; i++)
 				it--;
 
 			it.moveNodesToAnotherListFromFoundations(dest, source, number);
+	}
+	void MoveFoundationToListReverse(list<card*>& source, list<card*>& dest, int& number) {
+		list<card*> ::iterator it = source.end();
+
+		for (int i = 1; i < number; i++)
+			it--;
+
+		it.moveNodesToAnotherListFromFoundationsReverse(dest, source, number);
 	}
 	void forListsDestinationReverse(string source, string dest, int number) {
 		if (dest == "c1")
@@ -832,11 +849,15 @@ public:
 		if (commands.isEmpty())
 			cout << "No Undo Possible!" << endl;
 		else
-			if (commands.top() == "s" && wastePile.size() > 0)
+			if (commands.top() == "s" && wastePile.size() > 0) {
 				wastePile.getList().movelistToFoundation(stackPile.getList());
-			else if (commands.top() == "s" && wastePile.size() == 0)
+				commands.pop();
+			}
+			else if (commands.top() == "s" && wastePile.size() == 0) {
 				for (int i = 23; i >= 0; i--)
 					stackPile.getList().movelistToFoundation(wastePile.getList());
+				commands.pop();
+			}
 			else {
 				stringstream ss(commands.top());
 				char action;
@@ -850,6 +871,7 @@ public:
 					forListsDestinationReverse(source, dest, number);
 				else
 					moveToWasteReverse(wastePile.getList(), source, number);
+				commands.pop();
 			}
 	}
 	void runCommand() {
