@@ -800,6 +800,15 @@ public:
 			movetoList(columnLists[6], source, number);
 	}
 
+	void runUndoCommand() {
+		
+		stringstream ss(commands.top());
+		char action;
+		string source, dest;
+		int number;
+
+		ss >> action >> dest >> source >> number;
+	}
 	void runCommand() {
 		if (command == "s" && stackPile.size() > 0) {
 			stackPile.getList().movelistToFoundation(wastePile.getList());
@@ -812,12 +821,7 @@ public:
 			}
 		}
 		else if (command == "z") {
-			stringstream ss(commands.top());
-			char action;
-			string source, dest;
-			int number;
-
-			ss >> action >> dest >> source >> number;
+			runUndoCommand();
 		}
 		else if (command == "quit")
 			return;
