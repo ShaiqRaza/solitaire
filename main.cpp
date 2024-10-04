@@ -579,6 +579,18 @@ public:
 			cout << "Given Destination not exists" << endl;
 		}
 	}
+	void MoveWasteToList(list<card*>& dest, int& number) {
+		card* c1 = wastePile.top();
+		card* c2 = dest.getTail();
+		if (!conditionsForCardsInLists(c1, c2))
+			cout << "Invalid Command!" << endl;
+		else {
+			list<card*> l = wastePile.getList();
+			list<card*> ::iterator it = l.end();
+			it.moveNodesToAnotherListFromFoundations(dest, l, number);
+			commands.push(command);
+		}
+	}
 	void MoveListToList(list<card*>& source, list<card*>& dest, int& number) {
 		if (number > source.getSize()) {
 			cout << "Invalid Command!" << endl;
@@ -647,18 +659,8 @@ public:
 			MoveListToList(columnLists[5], dest, number);
 		else if (source == "c7")
 			MoveListToList(columnLists[6], dest, number);
-		else if (source == "w") {
-			card* c1 = wastePile.top();
-			card* c2 = dest.getTail();
-			if (!conditionsForCardsInLists(c1, c2))
-				cout << "Invalid Command!" << endl;
-			else {
-				list<card*> l = wastePile.getList();
-				list<card*> ::iterator it = l.end();
-				it.moveNodesToAnotherListFromFoundations(dest, l, number);
-				commands.push(command);
-			}
-		}
+		else if (source == "w")
+			MoveWasteToList(dest, number);
 		else if (source == "f1")
 			MoveFundationToList(f1.getList(), dest, number);
 		else if (source == "f2") 
@@ -701,6 +703,103 @@ public:
 			movetoList(columnLists[6], source, number);
 		}
 	}
+	//for undo functions
+	
+	void moveListToWasteReverse(list<card*>& source, list<card*>& dest) {
+
+	}
+	void movetoFoundationReverse(stack<card*>& foundation, string source) {
+		card* f = foundation.top();
+		if (source == "c1") {
+			card* c = columnLists[0].getTail();
+			columnLists[0].movelistToFoundation(foundation.getList());
+			c = columnLists[0].getTail();
+			if (c)
+				if (c->getHide())
+					c->toggleHide();
+		}
+		else if (source == "c2") {
+			card* c = columnLists[1].getTail();
+			columnLists[1].movelistToFoundation(foundation.getList());
+			c = columnLists[1].getTail();
+			if (c)
+				if (c->getHide())
+					c->toggleHide();
+		}
+		else if (source == "c3") {
+			card* c = columnLists[2].getTail();
+			columnLists[2].movelistToFoundation(foundation.getList());
+			c = columnLists[2].getTail();
+			if (c)
+				if (c->getHide())
+					c->toggleHide();
+		}
+		else if (source == "c4") {
+			card* c = columnLists[3].getTail();
+			columnLists[3].movelistToFoundation(foundation.getList());
+			c = columnLists[3].getTail();
+			if (c)
+				if (c->getHide())
+					c->toggleHide();
+		}
+		else if (source == "c5") {
+			card* c = columnLists[4].getTail();
+			columnLists[4].movelistToFoundation(foundation.getList());
+			c = columnLists[4].getTail();
+			if (c)
+				if (c->getHide())
+					c->toggleHide();
+		}
+		else if (source == "c6") {
+			card* c = columnLists[5].getTail();
+			columnLists[5].movelistToFoundation(foundation.getList());
+			c = columnLists[5].getTail();
+			if (c)
+				if (c->getHide())
+					c->toggleHide();
+		}
+		else if (source == "c7") {
+			card* c = columnLists[6].getTail();
+			columnLists[6].movelistToFoundation(foundation.getList());
+			c = columnLists[6].getTail();
+			if (c)
+				if (c->getHide())
+					c->toggleHide();
+		}
+	}
+	void MoveListToListReverse(list<card*>& source, list<card*>& dest, int& number) {
+			list<card*> ::iterator it = source.end();
+
+			for (int i = 1; i < number; i++)
+				it--;
+
+			it.moveNodesToAnotherList(dest, source, number);
+	}
+	void MoveFundationToListReverse(list<card*>& source, list<card*>& dest, int& number) {
+			list<card*> ::iterator it = source.end();
+
+			for (int i = 1; i < number; i++)
+				it--;
+
+			it.moveNodesToAnotherListFromFoundations(dest, source, number);
+	}
+	void forListsDestinationReverse(string source, string dest, int number) {
+		if (dest == "c1")
+			movetoList(columnLists[0], source, number);
+		else if (dest == "c2")
+			movetoList(columnLists[1], source, number);
+		else if (dest == "c3")
+			movetoList(columnLists[2], source, number);
+		else if (dest == "c4")
+			movetoList(columnLists[3], source, number);
+		else if (dest == "c5")
+			movetoList(columnLists[4], source, number);
+		else if (dest == "c6")
+			movetoList(columnLists[5], source, number);
+		else if (dest == "c7")
+			movetoList(columnLists[6], source, number);
+	}
+
 	void runCommand() {
 		if (command == "s" && stackPile.size() > 0) {
 			stackPile.getList().movelistToFoundation(wastePile.getList());
@@ -713,7 +812,12 @@ public:
 			}
 		}
 		else if (command == "z") {
-			
+			stringstream ss(commands.top());
+			char action;
+			string source, dest;
+			int number;
+
+			ss >> action >> dest >> source >> number;
 		}
 		else if (command == "quit")
 			return;
